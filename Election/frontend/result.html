@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Election Results</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f4f4f9; padding: 20px; }
+    h2 { text-align: center; margin-bottom: 20px; }
+    table { width: 100%; border-collapse: collapse; background: white; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 30px; }
+    th, td { padding: 12px; border: 1px solid #ddd; text-align: center; }
+    th { background: #007bff; color: white; }
+    tr:nth-child(even) { background: #f9f9f9; }
+    #msg { margin-top: 15px; font-weight: bold; text-align: center; }
+    button { margin-top: 20px; padding: 10px 15px; border: none; border-radius: 6px; cursor: pointer; }
+    .refresh { background: #28a745; color: white; }
+    .refresh:hover { background: #1e7e34; }
+    .logout { background: #dc3545; color: white; margin-left: 10px; }
+    .logout:hover { background: #b02a37; }
+    .chart-container { width: 80%; margin: auto; }
+    .winner-box {
+      background: #ffeeba;
+      border: 2px solid #ffc107;
+      padding: 15px;
+      border-radius: 10px;
+      text-align: center;
+      margin-bottom: 25px;
+      font-size: 18px;
+      font-weight: bold;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+    }
+  </style>
+</head>
+<body>
+  <h2>📊 Election Results</h2>
+
+  <!-- Winner Display -->
+  <div id="winnerBox" class="winner-box">Finding winner...</div>
+
+  <!-- Results Table -->
+  <table id="resultsTable">
+    <thead>
+      <tr>
+        <th>Candidate</th>
+        <th>Party</th>
+        <th>Votes</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td colspan="3">Loading results...</td></tr>
+    </tbody>
+  </table>
+
+  <!-- Chart -->
+  <div class="chart-container">
+    <canvas id="resultsChart"></canvas>
+  </div>
+
+  <p id="msg"></p>
+
+  <div style="text-align: center;">
+    <button class="refresh" onclick="fetchResults()">🔄 Refresh</button>
+    <button class="logout" onclick="logout()">🚪 Logout</button>
+  </div>
+
+  <script>
+    let chartInstance = null;
+
+    async function fetchResults() {
+      try {
+        const res = await fetch("http://localhost:5000/api/results");
+        const results = await res.json();
+
+        const tbody = document.querySelector("#resultsTable tbody");
+        tbody.innerHTML = "";
+
+        if (results.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="3">No results yet.</td></tr>`;
+          document.getElementById("winnerBox").innerText = "No winner yet.";
+        } else {
+          // ✅ Display table rows
+          results.forEach(c => {
+            const row = `<tr>
+              <td><strong>${c.name}</strong></td>
+              <td>${c.party}</td>
+              <td>${c.votes}</td>
+            </tr>`;
+            tbody.innerHTML += row;
+          });
+
+          // ✅ Find winner (max votes)
+          const winner = results.reduce((max, c) => c.votes > max.votes ? c : max, results[0]);
+
+          document.getElementById("winnerBox").innerHTML =
+            `🏆 Winner: <strong>${winner.name}</strong> (${winner.party}) with <strong>${winner.votes}</strong> votes 🎉`;
+        }
+
+        // ✅ Update Chart
+        updateChart(results);
+
+      } catch (err) {
+        document.getElementById("msg").innerText = "⚠ Failed to load results.";
+        console.error("Fetch error:", err);
+      }
+    }
+
+    function updateChart(data) {
+      const ctx = document.getElementById("resultsChart").getContext("2d");
+
+      const labels = data.map(c => c.name);
+      const votes = data.map(c => c.votes);
+      const colors = ["#007bff", "#28a745", "#ffc107", "#dc3545", "#6f42c1"];
+
+      if (chartInstance) {
+        chartInstance.destroy();
+      }
+
+      chartInstance = new Chart(ctx, {
+        type: "bar",
+        data: {
+          labels: labels,
+          datasets: [{
+            label: "Votes",
+            data: votes,
+            backgroundColor: colors,
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { display: false },
+            title: { display: true, text: "Election Vote Counts" }
+          },
+          scales: { y: { beginAtZero: true } }
+        }
+      });
+    }
+
+    function logout() {
+      localStorage.removeItem("voter");
+      window.location.href = "login.html";
+    }
+
+    fetchResults();
+  </script>
+</body>
+</html>

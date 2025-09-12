@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Manage Candidates</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <style>
+    body { background-color: #f8f9fa; padding: 20px; }
+    h2 { color: #6f4e37; }
+    #formSection input { margin-bottom: 10px; }
+    .btn { margin-right: 5px; }
+    .back-link {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      background-color: #6f4e37;
+      color: white;
+      padding: 10px 15px;
+      border-radius: 5px;
+      text-decoration: none;
+    }
+    .back-link:hover { background-color: #563827; }
+  </style>
+</head>
+<body>
+  <a href="admin-dashboard.html" class="back-link">← Back to Dashboard</a>
+
+  <div class="container mt-4">
+    <h2 class="mb-2">Manage Candidates</h2>
+    <!-- <p>Fields: Candidate ID, Name, Party, Constituency</p> -->
+
+    <button class="btn btn-danger mb-3" onclick="showAddForm()">+ Add Candidate</button>
+
+    <!-- Add Candidate Form -->
+    <div id="formSection" class="mb-4" style="display: none;">
+      <input type="text" id="candidateId" class="form-control" placeholder="Candidate ID">
+      <input type="text" id="candidateName" class="form-control" placeholder="Name">
+      <input type="text" id="candidateParty" class="form-control" placeholder="Party">
+      <input type="text" id="candidateConstituency" class="form-control" placeholder="Constituency">
+      <button class="btn btn-success mt-2 w-100" onclick="addCandidate()">Save Candidate</button>
+    </div>
+
+    <!-- Candidates Table -->
+    <h4>All Candidates</h4>
+    <table class="table table-bordered">
+      <thead class="table-danger text-white">
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Party</th>
+          <th>Constituency</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="candidateTable"></tbody>
+    </table>
+  </div>
+
+  <script>
+    const API_URL = "http://localhost:5000/api/candidates"; // change to deployed URL later
+    let candidates = [];
+
+    async function fetchCandidates() {
+      const res = await fetch(API_URL);
+      candidates = await res.json();
+      renderTable();
+    }
+
+    function showAddForm() {
+      document.getElementById('formSection').style.display = 'block';
+    }
+
+    async function addCandidate() {
+      const candidateId = document.getElementById("candidateId").value;
+      const name = document.getElementById("candidateName").value;
+      const party = document.getElementById("candidateParty").value;
+      const constituency = document.getElementById("candidateConstituency").value;
+
+      if (!candidateId || !name || !party || !constituency) {
+        alert("Please fill out all fields.");
+        return;
+      }
+
+      const res = await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ candidateId, name, party, constituency })
+      });
+
+      if (res.ok) {
+        await fetchCandidates();
+        document.getElementById("formSection").style.display = 'none';
+        document.getElementById("candidateId").value = "";
+        document.getElementById("candidateName").value = "";
+        document.getElementById("candidateParty").value = "";
+        document.getElementById("candidateConstituency").value = "";
+      } else {
+        const error = await res.json();
+        alert(error.error || "Failed to add candidate");
+      }
+    }
+
+    async function deleteCandidate(index) {
+      const candidate = candidates[index];
+      if (!confirm(`Delete ${candidate.name}?`)) return;
+
+      const res = await fetch(`${API_URL}/${candidate.candidateId}`, { method: "DELETE" });
+      if (res.ok) {
+        await fetchCandidates();
+      } else {
+        const error = await res.json();
+        alert(error.error || "Delete failed");
+      }
+    }
+
+    function renderTable() {
+      const tbody = document.getElementById("candidateTable");
+      tbody.innerHTML = '';
+      candidates.forEach((candidate, index) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${candidate.candidateId}</td>
+          <td>${candidate.name}</td>
+          <td>${candidate.party}</td>
+          <td>${candidate.constituency}</td>
+          <td>
+            <button class="btn btn-info btn-sm me-1" onclick="editCandidate(${index})">✏</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteCandidate(${index})">🗑</button>
+          </td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    // placeholder for editing
+    function editCandidate(index) {
+      alert("Edit functionality not implemented yet.");
+    }
+
+    // load data on page load
+    fetchCandidates();
+  </script>
+</body>
+</html>

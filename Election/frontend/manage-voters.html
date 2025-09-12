@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Manage Voters</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    body { background-color: #f8f9fa; padding: 20px; }
+    h2 { color: #6f4e37; }
+    #formSection input { margin-bottom: 10px; }
+    .btn { margin-right: 5px; }
+    .back-link {
+      position: fixed;
+      top: 5px;
+      left: 15px;
+      background-color: #6f4e37;
+      color: white;
+      padding: 10px 15px;
+      border-radius: 5px;
+      text-decoration: none;
+    }
+    .back-link:hover { background-color: #563827; }
+  </style>
+</head>
+<body>
+  <a href="admin-dashboard.html" class="back-link">← Back</a>
+
+  <div class="container mt-4">
+    <h2 class="mb-2">Manage Voters</h2>
+    <!-- <p>Fields: Voter ID, Name, Age, Constituency</p> -->
+
+    <button class="btn btn-danger mb-3" onclick="showAddForm()">+ Add Voter</button>
+
+    <div id="formSection" class="mb-4" style="display: none;">
+      <input type="text" id="voterId" class="form-control" placeholder="Voter ID">
+      <input type="text" id="voterName" class="form-control" placeholder="Name">
+      <input type="number" id="voterAge" class="form-control" placeholder="Age">
+      <input type="text" id="voterConstituency" class="form-control" placeholder="Constituency">
+      <button class="btn btn-success mt-2 w-100" onclick="addVoter()">Save Voter</button>
+    </div>
+
+    <h4>All Voters</h4>
+    <table class="table table-bordered">
+      <thead class="table-danger text-white">
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Age</th>
+          <th>Constituency</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="voterTable"></tbody>
+    </table>
+  </div>
+ <script>
+  const API_URL = "http://localhost:5000/api/participants"; 
+  let voters = [];
+
+  async function fetchVoters() {
+    const res = await fetch(API_URL);
+    voters = await res.json();
+    renderTable();
+  }
+
+  function showAddForm() {
+    document.getElementById('formSection').style.display = 'block';
+  }
+
+  function renderTable() {
+    const tbody = document.getElementById("voterTable");
+    tbody.innerHTML = '';
+    voters.forEach((voter, index) => {
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${voter.id}</td>
+        <td>${voter.name}</td>
+        <td>${voter.age}</td>
+        <td>${voter.constituency}</td>
+        <td>
+          <button class="btn btn-info btn-sm me-1" onclick="editVoter(${index})">✏</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteVoter('${voter.id}')">🗑</button>
+        </td>
+      `;
+      tbody.appendChild(row);
+    });
+  }
+
+  async function addVoter() {
+    const participantId = document.getElementById("voterId").value;
+    const name = document.getElementById("voterName").value;
+    const age = parseInt(document.getElementById("voterAge").value);
+    const constituency = document.getElementById("voterConstituency").value;
+
+    if (!participantId || !name || !age || !constituency) {
+      alert("Please fill out all fields.");
+      return;
+    }
+
+    // ✅ Age validation
+    if (age < 18) {
+      alert("Voter must be at least 18 years old.");
+      return;
+    }
+
+    await fetch(API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ participantId, name, age, constituency })
+    });
+
+    await fetchVoters();
+
+    // Clear inputs
+    document.getElementById("voterId").value = '';
+    document.getElementById("voterName").value = '';
+    document.getElementById("voterAge").value = '';
+    document.getElementById("voterConstituency").value = '';
+    document.getElementById("formSection").style.display = 'none';
+  }
+
+ 
+  fetchVoters();
+</script>
+
+  
+</body>
+</html>

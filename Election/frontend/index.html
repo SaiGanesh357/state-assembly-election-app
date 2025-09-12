@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Election Application for State Assembly</title>
+  <link rel="stylesheet" href="css/style.css" /> 
+</head>
+<body>
+  <header>
+    <div class="header-container">
+      <img src="./gradiouslogo.png" alt="logo">
+      <h1 class="logo">Election Application for State Assembly</h1>
+      <nav class="navbar">
+        <a href="index.html" class="active">Home</a>
+        <a href="admin-login.html">Admin Login</a>
+        <a id="voterLoginLink" href="login.html">Voter Login</a>
+        <a href="admin-dashboard.html">Admin Dashboard</a>
+        <a href="result.html">Results</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <!-- Project Description -->
+    <section class="project-description">
+      <h2>About the Project</h2>
+      <p>
+        The State Assembly Election Web Application is a comprehensive platform that enables
+        <strong>secure voter registration</strong>, <strong>candidate management</strong>, 
+        <strong>live election tracking</strong>, and <strong>result monitoring</strong>. 
+        It provides features such as login authentication, countdown timer, admin controls, 
+        and statistical dashboards to support fair and transparent elections.
+      </p>
+    </section>
+
+    <!-- Countdown -->
+    <section class="election-status">
+      <h2>🗳️ Election Countdown</h2>
+      <p id="countdown">Loading...</p>
+    </section>
+
+    <!-- Stats -->
+    <section class="stats">
+      <div class="stat-box">
+        <strong>Total Voters</strong>
+        <span id="totalVoters">0</span>
+      </div>
+      <div class="stat-box">
+        <strong>Total Candidates</strong>
+        <span id="totalCandidates">0</span>
+      </div>
+    </section>
+  </main>
+
+  <footer style="background-color: #1a237e; color: white; text-align: center; padding: 30px 15px; margin-top: 40px;">
+  <p>&copy; 2025 Election Commission | All Rights Reserved</p>
+  <p>
+    🗳️ <strong>Disclaimer:</strong> This is a demo election application built for educational purposes only. 
+    The data shown here does not represent any real election.
+  </p>
+  <p>
+    ⚖️ Ensuring <strong>fairness</strong>, <strong>transparency</strong>, and <strong>security</strong> in digital elections.
+  </p>
+  <p>
+    📩 Contact us: <a href="mailto:info@electioncommission.org" style="color:#ffcc80;">info@electioncommission.org</a>
+  </p>
+</footer>
+
+
+  <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      const totalVotersEl = document.getElementById("totalVoters");
+      const totalCandidatesEl = document.getElementById("totalCandidates");
+      const countdownEl = document.getElementById("countdown");
+      const voterLoginLink = document.getElementById("voterLoginLink");
+
+      try {
+        // Fetch Voters
+        const votersRes = await fetch("http://localhost:5000/api/participants"); 
+        const votersData = await votersRes.json();
+        totalVotersEl.textContent = votersData.length;
+
+        // Fetch Candidates
+        const candidatesRes = await fetch("http://localhost:5000/api/candidates"); 
+        const candidatesData = await candidatesRes.json();
+        totalCandidatesEl.textContent = candidatesData.length;
+
+        // Fetch Elections (for countdown)
+        const electionRes = await fetch("http://localhost:5000/api/elections");
+        const electionData = await electionRes.json();
+
+        if (electionData.length === 0) {
+          countdownEl.textContent = "No election date set.";
+          voterLoginLink.classList.add("disabled"); 
+          return;
+        }
+
+        const latestElection = electionData[0];
+        const electionDate = new Date(latestElection.date);
+
+        function updateCountdown() {
+          const now = new Date();
+          const timeDiff = electionDate - now;
+
+          if (timeDiff <= 0) {
+            countdownEl.textContent = "🗳️ Election Day! You can login and vote.";
+            voterLoginLink.classList.remove("disabled");
+            return;
+          }
+
+          const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+          const hours = Math.floor((timeDiff / (1000 * 60 * 60)) % 24);
+          const minutes = Math.floor((timeDiff / (1000 * 60)) % 60);
+          const seconds = Math.floor((timeDiff / 1000) % 60);
+
+          countdownEl.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s remaining`;
+          voterLoginLink.classList.add("disabled");
+        }
+
+        updateCountdown();
+        setInterval(updateCountdown, 1000);
+
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        totalVotersEl.textContent = "Error";
+        totalCandidatesEl.textContent = "Error";
+        countdownEl.textContent = "Error loading election date.";
+        voterLoginLink.classList.add("disabled");
+      }
+    });
+  </script>
+</body>
+</html>

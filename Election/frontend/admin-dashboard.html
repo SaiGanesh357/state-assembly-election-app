@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin Dashboard - State Election</title>
+  <link rel="stylesheet" href="admin-dashboard.css" />
+  <style>
+
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  background-color: #f4f4f4;
+}
+
+header {
+  background-color: #3f51b5;
+  color: white;
+  padding: 20px;
+  text-align: center;
+}
+
+nav {
+  margin-top: 10px;
+}
+
+nav a {
+  color: white;
+  margin: 0 15px;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+nav a.active,
+nav a:hover {
+  text-decoration: underline;
+}
+
+main {
+  padding: 20px;
+}
+
+.dashboard-cards {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  gap: 20px;
+}
+
+.card {
+  background-color: white;
+  border-radius: 8px;
+  padding: 20px;
+  width: 280px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  text-align: center;
+}
+
+.card h2 {
+  color: #6f4e37;
+}
+
+.card button {
+  padding: 10px 20px;
+  background-color: #6f4e37;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.card button:hover {
+  background-color: #563827;
+}
+
+.logout-link {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #6f4e37;
+  color: white;
+  padding: 10px 16px;
+  text-decoration: none;
+  border-radius: 5px;
+  font-weight: bold;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+.logout-link:hover {
+  background-color: #563827;
+}
+
+
+  </style>
+</head>
+<body>
+  <header>
+    <h1>State Assembly Election - Admin Dashboard</h1>
+    <nav>
+      <a href="index.html">🏠 Home</a>
+      <a href="admin-dashboard.html" class="active">Admin Dashboard</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="dashboard-cards">
+      <div class="card">
+        <h2>Manage Voters</h2>
+        <p>Add, update, or remove voter information.</p>
+        <button onclick="goTo('manage-voters.html')">Go</button>
+      </div>
+
+      <div class="card">
+        <h2>Manage Candidates</h2>
+        <p>Add or edit candidates for each constituency.</p>
+        <button onclick="goTo('manage-candidates.html')">Go</button>
+      </div>
+
+      <div class="card">
+        <h2>Manage Elections</h2>
+        <p>Manage-Election Schedule and Timings.</p>
+        <button onclick="goTo('manage-elections.html')">Go</button>
+      </div>
+    </section>
+  </main>
+  <a href="index.html" class="logout-link">Logout</a>
+    
+  <script>
+    function goTo(page) {
+      window.location.href = page;
+    }
+  </script>
+</body>
+</html>

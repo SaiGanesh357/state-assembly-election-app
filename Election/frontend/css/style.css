@@ -1,0 +1,188 @@
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(to right, #e3f2fd, #fffde7);
+  display: flex;
+  flex-direction: column;
+  color: #333;
+}
+
+/* Header */
+header {
+  background: linear-gradient(to right, #1a237e, #3949ab);
+  color: white;
+  padding: 25px 20px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.header-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.logo {
+  font-size: 35px;
+  font-weight: bold;
+  margin-bottom: 15px;
+  color: white;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+header img {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  height: 70px;
+  width: auto;
+  border-radius: 6px;
+  z-index: 9999;
+}
+
+/* Navbar */
+.navbar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 18px;
+}
+
+.navbar a {
+  color: white;
+  text-decoration: none;
+  background: rgba(255, 255, 255, 0.15);
+  padding: 10px 18px;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  font-size: 16px;
+}
+
+.navbar a:hover,
+.navbar a.active {
+  background-color: rgba(255, 255, 255, 0.3);
+  transform: scale(1.05);
+}
+
+.navbar a.disabled {
+  pointer-events: none;
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Main Content */
+main {
+  flex: 1;
+  padding: 50px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Project Description */
+.project-description {
+  max-width: 800px;
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+  text-align: center;
+  animation: fadeIn 1s ease-in-out;
+}
+
+.project-description h2 {
+  color: #1a237e;
+  font-size: 26px;
+  margin-bottom: 15px;
+}
+
+.project-description p {
+  font-size: 18px;
+  color: #444;
+  line-height: 1.6;
+}
+
+/* Election Countdown */
+.election-status {
+  background-color: white;
+  padding: 30px 40px;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  margin: 50px 0;
+  animation: fadeIn 1s ease-in-out;
+}
+
+.election-status h2 {
+  font-size: 26px;
+  margin-bottom: 15px;
+  color: #1a237e;
+}
+
+#countdown {
+  font-size: 22px;
+  color: #d32f2f;
+  font-weight: bold;
+}
+
+/* Stats Section */
+.stats {
+  display: flex;
+  gap: 40px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.stat-box {
+  background-color: #ffffff;
+  padding: 25px 35px;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s;
+  min-width: 220px;
+  animation: fadeIn 1s ease-in-out;
+}
+
+.stat-box:hover {
+  transform: translateY(-5px);
+}
+
+.stat-box strong {
+  display: block;
+  font-size: 20px;
+  color: #1565c0;
+  margin-bottom: 10px;
+}
+
+.stat-box span {
+  font-size: 32px;
+  color: #0d47a1;
+  font-weight: bold;
+}
+
+/* Footer */
+footer {
+  background-color: #1a237e;
+  color: white;
+  text-align: center;
+  padding: 20px 10px;
+  font-size: 14px;
+  margin-top: 40px;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
