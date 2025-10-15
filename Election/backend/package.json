@@ -12,4 +12,3 @@
   "dev": "nodemon server.js"
 }
   }
-}
