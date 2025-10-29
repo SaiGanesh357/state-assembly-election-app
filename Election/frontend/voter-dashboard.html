@@ -32,7 +32,7 @@
 
     async function fetchCandidates() {
       try {
-        const res = await fetch("http://localhost:5000/api/candidates");
+        const res = await fetch("https://state-assembly-election-app-8pky.onrender.com/api/candidates");
         const candidates = await res.json();
 
         const list = document.getElementById("candidateList");
@@ -62,7 +62,7 @@
       if (voter.hasVoted) return alert("❌ You have already voted!");
 
       try {
-        const res = await fetch("http://localhost:5000/api/vote/cast", {
+        const res = await fetch("https://state-assembly-election-app-8pky.onrender.com/api/vote/cast", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
