@@ -1,11 +1,12 @@
-const express = require('express');
-const mongoose = require('mongoose');
+// Load environment variables first!
 const dotenv = require('dotenv');
-const cors = require('cors');
-
-// Load .env at the VERY top
 dotenv.config();
 
+const express = require('express');
+const mongoose = require('mongoose');
+const cors = require('cors');
+
+// Import routes
 const authRoutes = require('./routes/auth');
 const voteRoutes = require('./routes/vote');
 const adminRoutes = require('./routes/admin');
@@ -17,9 +18,11 @@ const resultsRoute = require('./routes/results');
 
 const app = express();
 
+// Middleware setup
 app.use(cors());
 app.use(express.json());
 
+// Route setup
 app.use('/api/auth', authRoutes);
 app.use('/api/vote', voteRoutes);
 app.use('/api/admin', adminRoutes);
@@ -29,24 +32,28 @@ app.use('/api/participants', participantRoutes);
 app.use('/api/elections', electionRoutes);
 app.use('/api', resultsRoute);
 
-// --- DEBUG YOUR ENV VARIABLE ---
+// --- Debug: Print ENV URI just before connect ---
 console.log('MongoDB connection URI:', process.env.MONGO_URI);
+
+// Exit if missing
 if (!process.env.MONGO_URI) {
-    console.error('ERROR: MONGO_URI is undefined. Did you set it in the .env file and restart the server?');
-    process.exit(1); // Exit so you don't keep failing
+  console.error('ERROR: MONGO_URI is undefined! Please set it in your .env file and restart.');
+  process.exit(1);
 }
 
-// --- DB Connect with More Options ---
+// MongoDB connect
 mongoose.connect(process.env.MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    // useCreateIndex: true,   // Only add if you are using older mongoose & need it
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
 })
 .then(() => console.log('✅ MongoDB connected'))
 .catch(err => {
-    console.error('❌ MongoDB error:', err);
-    process.exit(1); // Optional: stop the server on DB failure
+  console.error('❌ MongoDB connection error:', err);
+  process.exit(1);
 });
 
+// Start server
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
+});
