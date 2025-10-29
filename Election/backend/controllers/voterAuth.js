@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const Voter = require("../models/Voter");
+const Voter = require("../models/voter");
 
 exports.voterLogin = async (req, res) => {
   try {
