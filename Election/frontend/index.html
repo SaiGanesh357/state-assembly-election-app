@@ -76,17 +76,17 @@
 
       try {
         // Fetch Voters
-        const votersRes = await fetch("http://localhost:5000/api/participants"); 
+        const votersRes = await fetch("https://state-assembly-election-app-8pky.onrender.com/api/participants"); 
         const votersData = await votersRes.json();
         totalVotersEl.textContent = votersData.length;
 
         // Fetch Candidates
-        const candidatesRes = await fetch("http://localhost:5000/api/candidates"); 
+        const candidatesRes = await fetch("https://state-assembly-election-app-8pky.onrender.com/api/candidates"); 
         const candidatesData = await candidatesRes.json();
         totalCandidatesEl.textContent = candidatesData.length;
 
         // Fetch Elections (for countdown)
-        const electionRes = await fetch("http://localhost:5000/api/elections");
+        const electionRes = await fetch("https://state-assembly-election-app-8pky.onrender.com/api/elections");
         const electionData = await electionRes.json();
 
         if (electionData.length === 0) {
