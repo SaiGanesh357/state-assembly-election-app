@@ -1,4 +1,4 @@
-const Voter = require('../models/Voter');
+const Voter = require('../models/voter');
 const Admin = require('../models/Admin');
 const jwt = require('jsonwebtoken');
 
