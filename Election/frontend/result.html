@@ -68,7 +68,7 @@
 
     async function fetchResults() {
       try {
-        const res = await fetch("http://localhost:5000/api/results");
+        const res = await fetch("https://state-assembly-election-app-8pky.onrender.com/api/results");
         const results = await res.json();
 
         const tbody = document.querySelector("#resultsTable tbody");
